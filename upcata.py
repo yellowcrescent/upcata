@@ -63,7 +63,13 @@ def get_changes(old, new, prefix='cdda-jenkins-b'):
     Get changes between @old and @new commits/branches
     """
     r = requests.get('https://api.github.com/repos/CleverRaven/Cataclysm-DDA/compare/{}{}...{}{}'.format(prefix, old, prefix, new))
-    commits = r.json()['commits']
+    rjson = r.json()
+
+    try:
+        commits = rjson['commits']
+    except:
+        logger.error("Failed to fetch changes: %s", rjson.get('message'))
+        return []
 
     chglog = [ "{ts} [{commit[author][name]}] {msg}".format(
                 msg=x['commit']['message'].replace('\n\n', '\n').replace('\n', '\n\t').strip(),
