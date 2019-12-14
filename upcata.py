@@ -18,8 +18,8 @@ https://ycnrg.org/
 
 """
 
-__version__ = '0.1.0'
-__date__ = 'May 29 2019'
+__version__ = '0.1.1'
+__date__ = 'Sep 17 2019'
 
 import os
 import sys
@@ -271,9 +271,12 @@ def _main():
         os.symlink(newpath, linkpath)
 
         # Ensure userdata directory exists
-        if not (os.path.join(USERDATA_DIR, 'save') and \
-                os.path.join(USERDATA_DIR, 'config') and \
-                os.path.join(USERDATA_DIR, 'sound')):
+        ud_save = os.path.realpath(os.path.join(USERDATA_DIR, 'save'))
+        ud_config = os.path.realpath(os.path.join(USERDATA_DIR, 'config'))
+        ud_sound = os.path.realpath(os.path.join(USERDATA_DIR, 'sound'))
+        if not (os.path.exists(ud_save) and \
+                os.path.exists(ud_config) and \
+                os.path.exists(ud_sound)):
             logger.info("Creating missing userdata directories")
             try:
                 os.makedirs(os.path.join(USERDATA_DIR, 'save'))
@@ -291,11 +294,14 @@ def _main():
         savedir = backup_data()
         if savedir is None:
             logger.warning("Backup for save & config data failed!")
+            curbackup = None
+        else:
+            curbackup = os.path.basename(savedir)
 
         logger.info("Upgrade complete")
         print("\n****************************")
         print("*** Current build: %s" % (get_current_release()))
-        print("*** Latest backup: %s" % (os.path.basename(savedir)))
+        print("*** Latest backup: %s" % (curbackup))
         print("Finished.")
     else:
         print("\n>> Use -u option to update to the latest release.\n")
