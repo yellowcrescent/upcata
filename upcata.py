@@ -27,15 +27,21 @@ import re
 import shutil
 import logging
 import tarfile
+import warnings
 from argparse import ArgumentParser
 
 import requests
 import arrow
+from arrow.factory import ArrowParseWarning
 
 
 logger = logging.getLogger('upcata')
 CURRENT_LINK = './current'
 USERDATA_DIR = './userdata'
+
+
+# disable ArrowParseWarning for 0.14.3+
+warnings.simplefilter('ignore', ArrowParseWarning)
 
 
 def setup_logging(clevel=logging.INFO, flevel=logging.DEBUG, logfile=None):
